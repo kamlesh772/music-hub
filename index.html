@@ -3,11 +3,21 @@
 <head>
   <title>Music Hub</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Pi SDK -->
+  <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+  <script>
+    Pi.init({ version: "2.0" });
+  </script>
 </head>
 
 <body style="text-align:center; font-family:Arial;">
 
   <h1>🎵 Music Hub</h1>
+
+  <!-- Pi Login -->
+  <button onclick="loginPi()">Login with Pi</button>
+  <p id="user"></p>
 
   <p>Upload your song:</p>
   <input type="file" id="upload" accept="audio/*">
@@ -38,8 +48,17 @@
       count++;
       document.getElementById("likes").innerText = "Likes: " + count;
     }
+
+    function loginPi() {
+      Pi.authenticate(["username"], function(auth) {
+        document.getElementById("user").innerText =
+          "Welcome " + auth.user.username;
+      }, function(error) {
+        console.error(error);
+        alert("Login failed");
+      });
+    }
   </script>
 
 </body>
 </html>
- 
