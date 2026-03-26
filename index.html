@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Music Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body style="text-align:center; font-family:Arial;">
+
+  <h1>🎵 Music Hub</h1>
+
+  <p>Upload your song:</p>
+  <input type="file" id="upload" accept="audio/*">
+
+  <br><br>
+
+  <audio controls id="player" style="width:90%;"></audio>
+
+  <br><br>
+
+  <button onclick="likeSong()">❤️ Like</button>
+  <p id="likes">Likes: 0</p>
+
+  <script>
+    let count = 0;
+
+    const upload = document.getElementById("upload");
+    const player = document.getElementById("player");
+
+    upload.addEventListener("change", function () {
+      const file = this.files[0];
+      if (file) {
+        player.src = URL.createObjectURL(file);
+      }
+    });
+
+    function likeSong() {
+      count++;
+      document.getElementById("likes").innerText = "Likes: " + count;
+    }
+  </script>
+
+</body>
+</html>
