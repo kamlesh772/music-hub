@@ -2,63 +2,57 @@
 <html>
 <head>
   <title>Music Hub</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- Pi SDK -->
   <script src="https://sdk.minepi.com/pi-sdk.js"></script>
-  <script>
-    Pi.init({ version: "2.0", sandbox: true });
-  </script>
 </head>
 
-<body style="text-align:center; font-family:Arial;">
+<body style="text-align:center; font-family:sans-serif;">
 
-  <h1>🎵 Music Hub</h1>
+<h1>🎵 Music Hub</h1>
 
-  <!-- Pi Login -->
-  <button onclick="loginPi()">Login with Pi</button>
-  <p id="user"></p>
+<button onclick="loginWithPi()">Login with Pi</button>
 
-  <p>Upload your song:</p>
-  <input type="file" id="upload" accept="audio/*">
+<br><br>
 
-  <br><br>
+<input type="file" id="fileInput"><br><br>
+<audio id="player" controls></audio><br><br>
 
-  <audio controls id="player" style="width:90%;"></audio>
+<button onclick="like()">❤️ Like</button>
+<p id="likes">Likes: 0</p>
 
-  <br><br>
+<script>
+  Pi.init({ version: "2.0", sandbox: true });
 
-  <button onclick="likeSong()">❤️ Like</button>
-  <p id="likes">Likes: 0</p>
+  async function loginWithPi() {
+    try {
+      const scopes = ['username'];
 
-  <script>
-    let count = 0;
-
-    const upload = document.getElementById("upload");
-    const player = document.getElementById("player");
-
-    upload.addEventListener("change", function () {
-      const file = this.files[0];
-      if (file) {
-        player.src = URL.createObjectURL(file);
-      }
-    });
-
-    function likeSong() {
-      count++;
-      document.getElementById("likes").innerText = "Likes: " + count;
-    }
-
-    function loginPi() {
-      Pi.authenticate(["username"], function(auth) {
-        document.getElementById("user").innerText =
-          "Welcome " + auth.user.username;
-      }, function(error) {
-        console.error(error);
-        alert("Login failed");
+      const auth = await Pi.authenticate(scopes, function(payment) {
+        console.log(payment);
       });
+
+      alert("Welcome " + auth.user.username);
+
+    } catch (e) {
+      console.log(e);
+      alert("Login failed");
     }
-  </script>
+  }
+
+  // music upload preview
+  document.getElementById("fileInput").addEventListener("change", function(e){
+    const file = e.target.files[0];
+    const url = URL.createObjectURL(file);
+    document.getElementById("player").src = url;
+  });
+
+  let count = 0;
+  function like(){
+    count++;
+    document.getElementById("likes").innerText = "Likes: " + count;
+  }
+</script>
 
 </body>
 </html>
