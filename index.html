@@ -2,57 +2,69 @@
 <html>
 <head>
   <title>Music Hub</title>
-
-  <!-- Pi SDK -->
   <script src="https://sdk.minepi.com/pi-sdk.js"></script>
 </head>
 
 <body style="text-align:center; font-family:sans-serif;">
 
-<h1>🎵 Music Hub</h1>
+  <h1>🎵 Music Hub</h1>
 
-<button onclick="loginWithPi()">Login with Pi</button>
+  <button onclick="login()">Login with Pi</button>
+  <h3 id="user"></h3>
 
-<br><br>
+  <br><br>
 
-<input type="file" id="fileInput"><br><br>
-<audio id="player" controls></audio><br><br>
+  <h3>Upload your song:</h3>
+  <input type="file" id="fileInput" accept="audio/*">
 
-<button onclick="like()">❤️ Like</button>
-<p id="likes">Likes: 0</p>
+  <br><br>
 
-<script>
-  Pi.init({ version: "2.0", sandbox: true });
+  <audio id="player" controls></audio>
 
-  async function loginWithPi() {
-    try {
-      const scopes = ['username'];
+  <br><br>
 
-      const auth = await Pi.authenticate(scopes, function(payment) {
-        console.log(payment);
-      });
+  <button onclick="like()">❤️ Like</button>
+  <p id="likes">Likes: 0</p>
 
-      alert("Welcome " + auth.user.username);
+  <script>
+    let currentUser = "";
+    let likes = 0;
 
-    } catch (e) {
-      console.log(e);
-      alert("Login failed");
+    // Pi Init
+    Pi.init({ version: "2.0" });
+
+    async function login() {
+      try {
+        const scopes = ['username', 'payments'];
+        const auth = await Pi.authenticate(scopes, onIncompletePaymentFound);
+
+        currentUser = auth.user.username;
+        document.getElementById("user").innerText = "Welcome " + currentUser;
+
+      } catch (err) {
+        alert("Login failed");
+      }
     }
-  }
 
-  // music upload preview
-  document.getElementById("fileInput").addEventListener("change", function(e){
-    const file = e.target.files[0];
-    const url = URL.createObjectURL(file);
-    document.getElementById("player").src = url;
-  });
+    function onIncompletePaymentFound(payment) {
+      console.log("Incomplete payment", payment);
+    }
 
-  let count = 0;
-  function like(){
-    count++;
-    document.getElementById("likes").innerText = "Likes: " + count;
-  }
-</script>
+    // Upload + Play
+    document.getElementById("fileInput").addEventListener("change", function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const url = URL.createObjectURL(file);
+        document.getElementById("player").src = url;
+      }
+    });
+
+    // Like system
+    function like() {
+      likes++;
+      document.getElementById("likes").innerText = "Likes: " + likes;
+    }
+  </script>
 
 </body>
 </html>
